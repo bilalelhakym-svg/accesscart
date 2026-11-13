@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AccessCart | Store Accessibility Checker</title>
+<meta name="description" content="Discover accessibility issues in your online store and improve the shopping experience for everyone.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;color:#172033;background:#fff;line-height:1.6}
+header{height:75px;display:flex;align-items:center;justify-content:space-between;padding:0 8%;border-bottom:1px solid #eee}
+.logo{font-size:23px;font-weight:800;color:#172033}
+.logo span{color:#2563eb}
+nav a{margin-left:25px;text-decoration:none;color:#475569;font-size:14px}
+.hero{text-align:center;padding:100px 20px 75px;background:linear-gradient(180deg,#eff6ff,#fff)}
+.tag{display:inline-block;background:#dbeafe;color:#1d4ed8;padding:7px 15px;border-radius:30px;font-size:13px;font-weight:bold}
+h1{font-size:clamp(36px,5vw,58px);line-height:1.12;max-width:800px;margin:25px auto;color:#14213d}
+.hero p{max-width:620px;margin:20px auto;color:#64748b;font-size:17px}
+.scan{max-width:650px;margin:35px auto 0;padding:10px;background:#fff;border:1px solid #dbe2ea;border-radius:12px;display:flex;gap:10px;box-shadow:0 12px 35px #1e293b12}
+.scan input{flex:1;min-width:0;border:0;outline:0;padding:14px;font-size:15px}
+button{background:#2563eb;color:white;border:0;padding:15px 23px;border-radius:8px;font-weight:bold;cursor:pointer}
+button:hover{background:#1d4ed8}
+#message{margin:15px auto;max-width:650px;color:#475569;font-size:14px}
+section{padding:65px 8%;text-align:center}
+h2{font-size:32px;margin-bottom:12px}
+.sub{color:#64748b;margin-bottom:35px}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;max-width:1000px;margin:auto}
+.feature{border:1px solid #e5e7eb;border-radius:13px;padding:28px;text-align:left}
+.feature .icon{font-size:30px}
+.feature h3{margin:12px 0 8px}
+.feature p{font-size:14px;color:#64748b}
+footer{text-align:center;padding:30px;background:#f8fafc;color:#64748b;font-size:13px}
+@media(max-width:600px){header{padding:0 5%}nav a{margin-left:10px;font-size:12px}.hero{padding-top:65px}.scan{flex-direction:column}.scan input{padding:14px}}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">Access<span>Cart</span></div>
+<nav>
+<a href="#features">Features</a>
+<a href="#about">About</a>
+</nav>
+</header>
+
+<main>
+<div class="hero">
+<span class="tag">E-COMMERCE ACCESSIBILITY</span>
+<h1>Make Your Online Store Accessible to Everyone.</h1>
+<p>Discover potential accessibility problems in your online store and create a better shopping experience for every customer.</p>
+
+<form class="scan" id="scanForm">
+<input type="url" id="storeUrl" placeholder="https://yourstore.com" required>
+<button type="submit">Check My Store →</button>
+</form>
+<div id="message" role="status" aria-live="polite"></div>
+</div>
+
+<section id="features">
+<h2>What We Help You Discover</h2>
+<p class="sub">Understand potential barriers in your online shopping experience.</p>
+<div class="features">
+<div class="feature">
+<div class="icon">👁️</div>
+<h3>Visual Accessibility</h3>
+<p>Discover possible color contrast and text readability issues.</p>
+</div>
+<div class="feature">
+<div class="icon">⌨️</div>
+<h3>Keyboard Navigation</h3>
+<p>Identify elements that may be difficult to navigate without a mouse.</p>
+</div>
+<div class="feature">
+<div class="icon">🛒</div>
+<h3>Shopping Experience</h3>
+<p>Review accessibility barriers in important shopping pages.</p>
+</div>
+<div class="feature">
+<div class="icon">📝</div>
+<h3>Form Accessibility</h3>
+<p>Find potential problems with labels and form instructions.</p>
+</div>
+</div>
+</section>
+
+<section id="about" style="background:#f8fafc">
+<h2>Accessibility Matters</h2>
+<p class="sub">Our goal is to help online stores make shopping easier and more inclusive.</p>
+</section>
+</main>
+
+<footer>
+<p>© 2026 AccessCart. Accessibility for every shopper.</p>
+<p>Automated checks are preliminary and do not certify legal compliance.</p>
+</footer>
+
+<script>
+document.getElementById("scanForm").addEventListener("submit",function(e){
+e.preventDefault();
+const url=document.getElementById("storeUrl").value;
+document.getElementById("message").textContent=
+"Thank you! Your store URL is ready for our upcoming accessibility scanning engine: "+url;
+});
+</script>
+</body>
+</html>
