@@ -1,0 +1,198 @@
+const express = require("express");
+const { chromium } = require("playwright");
+const AxeBuilder = require("@axe-core/playwright").default;
+const dns = require("dns").promises;
+const net = require("net");
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json({ limit: "10kb" }));
+app.use(express.static(path.join(__dirname, "public")));
+
+function isPrivateIP(ip) {
+  if (net.isIPv4(ip)) {
+    const p = ip.split(".").map(Number);
+
+    return (
+      p[0] === 0 ||
+      p[0] === 10 ||
+      p[0] === 127 ||
+      p[0] >= 224 ||
+      (p[0] === 169 && p[1] === 254) ||
+      (p[0] === 172 && p[1] >= 16 && p[1] <= 31) ||
+      (p[0] === 192 && p[1] === 168) ||
+      (p[0] === 100 && p[1] >= 64 && p[1] <= 127) ||
+      (p[0] === 198 && (p[1] === 18 || p[1] === 19))
+    );
+  }
+
+  if (net.isIPv6(ip)) {
+    const x = ip.toLowerCase();
+
+    return (
+      x === "::" ||
+      x === "::1" ||
+      x.startsWith("fc") ||
+      x.startsWith("fd") ||
+      x.startsWith("fe80:") ||
+      x.startsWith("ff") ||
+      x.startsWith("::ffff:")
+    );
+  }
+
+  return true;
+}
+
+async function safeURL(value) {
+  try {
+    const url = new URL(value);
+
+    if (!["http:", "https:"].includes(url.protocol)) return false;
+    if (url.username || url.password) return false;
+
+    const host = url.hostname.toLowerCase();
+
+    if (
+      host === "localhost" ||
+      host.endsWith(".localhost") ||
+      host.endsWith(".local")
+    ) return false;
+
+    if (net.isIP(host)) return !isPrivateIP(host);
+
+    const addresses = await dns.lookup(host, { all: true });
+
+    return addresses.length > 0 &&
+      addresses.every(item => !isPrivateIP(item.address));
+
+  } catch {
+    return false;
+  }
+}
+
+app.get("/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "AccessCart scanner is running!"
+  });
+});
+
+app.post("/api/scan", async (req, res) => {
+  const { url } = req.body || {};
+
+  if (typeof url !== "string" || url.length > 2048) {
+    return res.status(400).json({
+      error: "Please enter a valid website URL."
+    });
+  }
+
+  if (!(await safeURL(url))) {
+    return res.status(400).json({
+      error: "This website URL is not allowed."
+    });
+  }
+
+  let browser;
+
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
+
+    const page = await browser.newPage({
+      viewport: { width: 1365, height: 900 }
+    });
+
+    page.setDefaultTimeout(10000);
+
+    await page.route("**/*", async route => {
+      const requestURL = route.request().url();
+
+      if (
+        requestURL.startsWith("data:") ||
+        requestURL.startsWith("blob:")
+      ) {
+        return route.continue();
+      }
+
+      if (!(await safeURL(requestURL))) {
+        return route.abort();
+      }
+
+      return route.continue();
+    });
+
+    await page.goto(url, {
+      waitUntil: "domcontentloaded",
+      timeout: 30000
+    });
+
+    await page.waitForTimeout(1500);
+
+    const axeResults = await new AxeBuilder({ page })
+      .withTags([
+        "wcag2a",
+        "wcag2aa",
+        "wcag21a",
+        "wcag21aa",
+        "best-practice"
+      ])
+      .analyze();
+
+    const violations = axeResults.violations.map(issue => ({
+      id: issue.id,
+      title: issue.help,
+      description: issue.description,
+      impact: issue.impact,
+      helpUrl: issue.helpUrl,
+      affectedElements: issue.nodes.length,
+
+      elements: issue.nodes.slice(0, 10).map(node => ({
+        html: node.html,
+        target: node.target,
+        explanation: node.failureSummary
+      }))
+    }));
+
+    res.json({
+      success: true,
+      scannedUrl: page.url(),
+      pageTitle: await page.title(),
+
+      summary: {
+        violations: violations.length,
+        critical: violations.filter(x => x.impact === "critical").length,
+        serious: violations.filter(x => x.impact === "serious").length,
+        moderate: violations.filter(x => x.impact === "moderate").length,
+        minor: violations.filter(x => x.impact === "minor").length,
+        affectedElements: violations.reduce(
+          (total, x) => total + x.affectedElements, 0
+        ),
+        passes: axeResults.passes.length,
+        incomplete: axeResults.incomplete.length
+      },
+
+      violations
+    });
+
+  } catch (error) {
+    console.error("AccessCart scan error:", error);
+
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        error: "Unable to scan this website. Please try again."
+      });
+    }
+
+  } finally {
+    if (browser) await browser.close();
+  }
+});
+
+app.listen(PORT, () => {
+  console.log("AccessCart running on port " + PORT);
+});
