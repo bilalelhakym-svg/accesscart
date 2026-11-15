@@ -1,106 +1,675 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AccessCart | Store Accessibility Checker</title>
-<meta name="description" content="Discover accessibility issues in your online store and improve the shopping experience for everyone.">
+
+<title>AccessCart | Store Accessibility Scanner</title>
+
+<meta name="description" content="Scan your online store for accessibility issues and improve the shopping experience for everyone.">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;color:#172033;background:#fff;line-height:1.6}
-header{height:75px;display:flex;align-items:center;justify-content:space-between;padding:0 8%;border-bottom:1px solid #eee}
-.logo{font-size:23px;font-weight:800;color:#172033}
-.logo span{color:#2563eb}
-nav a{margin-left:25px;text-decoration:none;color:#475569;font-size:14px}
-.hero{text-align:center;padding:100px 20px 75px;background:linear-gradient(180deg,#eff6ff,#fff)}
-.tag{display:inline-block;background:#dbeafe;color:#1d4ed8;padding:7px 15px;border-radius:30px;font-size:13px;font-weight:bold}
-h1{font-size:clamp(36px,5vw,58px);line-height:1.12;max-width:800px;margin:25px auto;color:#14213d}
-.hero p{max-width:620px;margin:20px auto;color:#64748b;font-size:17px}
-.scan{max-width:650px;margin:35px auto 0;padding:10px;background:#fff;border:1px solid #dbe2ea;border-radius:12px;display:flex;gap:10px;box-shadow:0 12px 35px #1e293b12}
-.scan input{flex:1;min-width:0;border:0;outline:0;padding:14px;font-size:15px}
-button{background:#2563eb;color:white;border:0;padding:15px 23px;border-radius:8px;font-weight:bold;cursor:pointer}
-button:hover{background:#1d4ed8}
-#message{margin:15px auto;max-width:650px;color:#475569;font-size:14px}
-section{padding:65px 8%;text-align:center}
-h2{font-size:32px;margin-bottom:12px}
-.sub{color:#64748b;margin-bottom:35px}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;max-width:1000px;margin:auto}
-.feature{border:1px solid #e5e7eb;border-radius:13px;padding:28px;text-align:left}
-.feature .icon{font-size:30px}
-.feature h3{margin:12px 0 8px}
-.feature p{font-size:14px;color:#64748b}
-footer{text-align:center;padding:30px;background:#f8fafc;color:#64748b;font-size:13px}
-@media(max-width:600px){header{padding:0 5%}nav a{margin-left:10px;font-size:12px}.hero{padding-top:65px}.scan{flex-direction:column}.scan input{padding:14px}}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  color: #172033;
+  background: #f8fafc;
+  line-height: 1.6;
+}
+
+header {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.logo span {
+  color: #2563eb;
+}
+
+nav a {
+  margin-left: 24px;
+  text-decoration: none;
+  color: #475569;
+  font-size: 14px;
+}
+
+.hero {
+  text-align: center;
+  padding: 90px 20px 70px;
+  background: linear-gradient(180deg, #eff6ff, #f8fafc);
+}
+
+.tag {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 7px 15px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+h1 {
+  max-width: 800px;
+  margin: 25px auto;
+  font-size: clamp(35px, 5vw, 57px);
+  line-height: 1.15;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: 15px auto;
+  color: #64748b;
+}
+
+.scan {
+  display: flex;
+  gap: 10px;
+  max-width: 700px;
+  margin: 35px auto 0;
+  padding: 10px;
+  background: white;
+  border: 1px solid #dbe2ea;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px #0000000a;
+}
+
+.scan input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 15px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+#message {
+  margin: 18px auto;
+  max-width: 700px;
+  font-size: 14px;
+  color: #475569;
+}
+
+section {
+  padding: 65px 8%;
+  text-align: center;
+}
+
+h2 {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.sub {
+  color: #64748b;
+  margin-bottom: 35px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+  max-width: 1050px;
+  margin: auto;
+}
+
+.feature {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 13px;
+  padding: 28px;
+  text-align: left;
+}
+
+.icon {
+  font-size: 30px;
+}
+
+.feature h3 {
+  margin: 12px 0;
+}
+
+.feature p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Results */
+
+#results {
+  display: none;
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 28px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  text-align: left;
+}
+
+#results h2 {
+  margin-top: 15px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.stat {
+  padding: 18px;
+  text-align: center;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 28px;
+  color: #2563eb;
+}
+
+.issue {
+  border-top: 1px solid #e5e7eb;
+  padding: 22px 0;
+}
+
+.issue h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.severity {
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 8px 0;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.critical, .serious {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.moderate {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.minor {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.issue pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 12px;
+}
+
+.issue a {
+  color: #2563eb;
+}
+
+.download {
+  margin: 20px 0;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  background: white;
+  color: #64748b;
+  font-size: 13px;
+}
+
+@media(max-width:600px) {
+  header {
+    padding: 0 5%;
+  }
+
+  nav a {
+    margin-left: 8px;
+    font-size: 12px;
+  }
+
+  .hero {
+    padding: 60px 15px;
+  }
+
+  .scan {
+    flex-direction: column;
+  }
+
+  #results {
+    margin: 15px;
+    padding: 17px;
+  }
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<div class="logo">Access<span>Cart</span></div>
-<nav>
-<a href="#features">Features</a>
-<a href="#about">About</a>
-</nav>
+  <div class="logo">Access<span>Cart</span></div>
+
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+  </nav>
 </header>
 
 <main>
-<div class="hero">
-<span class="tag">E-COMMERCE ACCESSIBILITY</span>
-<h1>Make Your Online Store Accessible to Everyone.</h1>
-<p>Discover potential accessibility problems in your online store and create a better shopping experience for every customer.</p>
 
-<form class="scan" id="scanForm">
-<input type="url" id="storeUrl" placeholder="https://yourstore.com" required>
-<button type="submit">Check My Store →</button>
-</form>
-<div id="message" role="status" aria-live="polite"></div>
+<div class="hero">
+
+  <span class="tag">SMART ACCESSIBILITY SCANNER</span>
+
+  <h1>Make Your Online Store Accessible to Everyone.</h1>
+
+  <p>
+    Discover accessibility problems in your online store.
+    Improve usability and create a better shopping experience
+    for every customer.
+  </p>
+
+  <form class="scan" id="scanForm">
+
+    <input
+      type="url"
+      id="storeUrl"
+      placeholder="https://yourstore.com"
+      aria-label="Enter your store URL"
+      required
+    >
+
+    <button type="submit" id="scanButton">
+      Scan My Store →
+    </button>
+
+  </form>
+
+  <div id="message" role="status" aria-live="polite">
+    Enter your website URL to start scanning.
+  </div>
+
+</div>
+
+<div id="results" aria-live="polite">
+
+  <h2>Accessibility Report</h2>
+
+  <p id="scannedUrl"></p>
+  <p id="pageTitle"></p>
+
+  <div class="stats">
+
+    <div class="stat">
+      <strong id="totalIssues">0</strong>
+      Total Issues
+    </div>
+
+    <div class="stat">
+      <strong id="critical">0</strong>
+      Critical
+    </div>
+
+    <div class="stat">
+      <strong id="serious">0</strong>
+      Serious
+    </div>
+
+    <div class="stat">
+      <strong id="moderate">0</strong>
+      Moderate
+    </div>
+
+    <div class="stat">
+      <strong id="minor">0</strong>
+      Minor
+    </div>
+
+    <div class="stat">
+      <strong id="affected">0</strong>
+      Affected Elements
+    </div>
+
+  </div>
+
+  <h2>Detected Problems</h2>
+
+  <div id="issueList"></div>
+
+  <button class="download" id="downloadReport">
+    Download Report
+  </button>
+
 </div>
 
 <section id="features">
-<h2>What We Help You Discover</h2>
-<p class="sub">Understand potential barriers in your online shopping experience.</p>
-<div class="features">
-<div class="feature">
-<div class="icon">👁️</div>
-<h3>Visual Accessibility</h3>
-<p>Discover possible color contrast and text readability issues.</p>
-</div>
-<div class="feature">
-<div class="icon">⌨️</div>
-<h3>Keyboard Navigation</h3>
-<p>Identify elements that may be difficult to navigate without a mouse.</p>
-</div>
-<div class="feature">
-<div class="icon">🛒</div>
-<h3>Shopping Experience</h3>
-<p>Review accessibility barriers in important shopping pages.</p>
-</div>
-<div class="feature">
-<div class="icon">📝</div>
-<h3>Form Accessibility</h3>
-<p>Find potential problems with labels and form instructions.</p>
-</div>
-</div>
+
+  <h2>What We Check</h2>
+
+  <p class="sub">
+    Discover accessibility barriers in your online store.
+  </p>
+
+  <div class="features">
+
+    <div class="feature">
+      <div class="icon">👁️</div>
+      <h3>Visual Accessibility</h3>
+      <p>Find missing image descriptions and contrast problems.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon">⌨️</div>
+      <h3>Keyboard Navigation</h3>
+      <p>Identify potential keyboard accessibility problems.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon">🛒</div>
+      <h3>Shopping Experience</h3>
+      <p>Discover accessibility barriers affecting customers.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon">📝</div>
+      <h3>Form Accessibility</h3>
+      <p>Check form labels and instructions.</p>
+    </div>
+
+  </div>
+
 </section>
 
-<section id="about" style="background:#f8fafc">
-<h2>Accessibility Matters</h2>
-<p class="sub">Our goal is to help online stores make shopping easier and more inclusive.</p>
+<section id="about" style="background:#eff6ff">
+
+  <h2>Accessibility Matters</h2>
+
+  <p class="sub">
+    Our mission is to make online shopping easier for everyone.
+  </p>
+
 </section>
+
 </main>
 
 <footer>
-<p>© 2026 AccessCart. Accessibility for every shopper.</p>
-<p>Automated checks are preliminary and do not certify legal compliance.</p>
+
+  <p>© 2026 AccessCart. Accessibility for every shopper.</p>
+
+  <p>
+    Automated checks are preliminary and do not certify legal compliance.
+  </p>
+
 </footer>
 
 <script>
-document.getElementById("scanForm").addEventListener("submit",function(e){
-e.preventDefault();
-const url=document.getElementById("storeUrl").value;
-document.getElementById("message").textContent=
-"Thank you! Your store URL is ready for our upcoming accessibility scanning engine: "+url;
+
+const form = document.getElementById("scanForm");
+const button = document.getElementById("scanButton");
+const message = document.getElementById("message");
+const results = document.getElementById("results");
+
+let lastReport = null;
+
+form.addEventListener("submit", async function(e) {
+
+  e.preventDefault();
+
+  const input = document.getElementById("storeUrl").value.trim();
+
+  let url;
+
+  try {
+    url = new URL(input);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      throw new Error("Invalid protocol");
+    }
+
+    if (url.username || url.password) {
+      throw new Error("Credentials are not allowed");
+    }
+
+  } catch {
+    message.textContent =
+      "Please enter a valid HTTP or HTTPS website URL.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Scanning...";
+  message.textContent =
+    "Connecting to AccessCart scanning engine. Please wait...";
+
+  results.style.display = "none";
+  lastReport = null;
+
+  try {
+
+    const response = await fetch("/api/scan", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        url: url.href
+      })
+
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || "Scan failed.");
+    }
+
+    if (!Array.isArray(data.violations) || !data.summary) {
+      throw new Error("Invalid scan report.");
+    }
+
+    lastReport = data;
+
+    document.getElementById("scannedUrl").textContent =
+      "Website: " + data.scannedUrl;
+
+    document.getElementById("pageTitle").textContent =
+      "Page: " + (data.pageTitle || "Untitled");
+
+    document.getElementById("totalIssues").textContent =
+      data.summary.violations;
+
+    document.getElementById("critical").textContent =
+      data.summary.critical;
+
+    document.getElementById("serious").textContent =
+      data.summary.serious;
+
+    document.getElementById("moderate").textContent =
+      data.summary.moderate;
+
+    document.getElementById("minor").textContent =
+      data.summary.minor;
+
+    document.getElementById("affected").textContent =
+      data.summary.affectedElements;
+
+    const list = document.getElementById("issueList");
+    list.replaceChildren();
+
+    if (data.violations.length === 0) {
+
+      const success = document.createElement("p");
+
+      success.textContent =
+        "No accessibility violations were detected by these automated checks.";
+
+      list.appendChild(success);
+
+    }
+
+    data.violations.forEach(issue => {
+
+      const card = document.createElement("div");
+      card.className = "issue";
+
+      const heading = document.createElement("h3");
+      heading.textContent = issue.title || issue.id;
+
+      const severity = document.createElement("span");
+      const level = issue.impact || "minor";
+
+      severity.className = "severity " + level;
+      severity.textContent = level.toUpperCase();
+
+      const description = document.createElement("p");
+      description.textContent = issue.description || "";
+
+      const count = document.createElement("p");
+      count.textContent =
+        "Affected elements: " + issue.affectedElements;
+
+      card.append(
+        heading,
+        severity,
+        description,
+        count
+      );
+
+      (issue.elements || []).forEach(element => {
+
+        const details = document.createElement("details");
+
+        const summary = document.createElement("summary");
+        summary.textContent = "View affected element";
+
+        const code = document.createElement("pre");
+
+        code.textContent =
+          (element.html || "") +
+          "\n\n" +
+          (element.explanation || "") +
+          "\n\nSelector: " +
+          JSON.stringify(element.target || []);
+
+        details.append(summary, code);
+        card.appendChild(details);
+
+      });
+
+      if (issue.helpUrl) {
+
+        const link = document.createElement("a");
+
+        link.href = issue.helpUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Learn how to fix this issue →";
+
+        card.appendChild(link);
+
+      }
+
+      list.appendChild(card);
+
+    });
+
+    results.style.display = "block";
+
+    message.textContent =
+      "Scan completed successfully! Your report is ready.";
+
+    results.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+
+    message.textContent =
+      "Scan error: " + error.message;
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Scan My Store →";
+
+  }
+
 });
+
+document.getElementById("downloadReport")
+.addEventListener("click", function() {
+
+  if (!lastReport) return;
+
+  const blob = new Blob(
+    [JSON.stringify(lastReport, null, 2)],
+    { type: "application/json" }
+  );
+
+  const downloadUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = "accesscart-report.json";
+
+  link.click();
+
+  URL.revokeObjectURL(downloadUrl);
+
+});
+
 </script>
+
 </body>
 </html>
